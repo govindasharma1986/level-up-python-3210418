@@ -1,14 +1,22 @@
 from random import randint
-from collections import Counter
 
-def roll_dice(*dice, num_trials=1_000_000):
-    counts = Counter()
-    for _ in range(num_trials):
-        counts[sum((randint(1, sides) for sides in dice))] += 1
 
-    print('\nOUTCOME\tPROBABILITY')
-    for outcome in range(len(dice), sum(dice) + 1):
-        print(f'{outcome}\t{counts[outcome] * 100 / num_trials :0.2f}%')
+def roll_dice(*dice, samples=1_000_000):
+    total_count = {}
+    for _ in range(0,samples):
+        sum = 0
+        for item in dice:
+            rand_i = randint(1, item)
+            sum += rand_i
+        if sum not in total_count:
+            total_count[sum] = 1
+        else:
+            total_count[sum] += 1
+    total_count = dict(sorted(total_count.items()))
+
+    print('Outcome Probability')
+    for roll, count in total_count.items():
+        print(f'{roll}\t{count/samples*100 :0.2f}%')
 
 
 # commands used in solution video for reference

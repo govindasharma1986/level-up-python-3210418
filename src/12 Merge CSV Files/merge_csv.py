@@ -1,22 +1,23 @@
 import csv
 
-def merge_csv(csv_list, output_path):
-    # build list with all fieldnames
-    fieldnames = []
-    for file in csv_list:
-        with open(file, 'r', encoding='utf-8') as input_csv:
-            field = csv.DictReader(input_csv).fieldnames
-            fieldnames.extend(f for f in field if f not in fieldnames)
 
-    # write data to output file based on field names
-    with open(output_path, 'w', encoding='utf-8', newline='') as output_csv:
-        writer = csv.DictWriter(output_csv, fieldnames=fieldnames)
-        writer.writeheader()
-        for file in csv_list:
-            with open(file, 'r', encoding='utf-8') as input_csv:
-                reader = csv.DictReader(input_csv)
-                for row in reader:
-                    writer.writerow(row)
+def merge_csv(list_of_input_files: list, output_file: str):
+    merged_data = []
+    headers = []
+    for input_file in list_of_input_files:
+        with open(input_file, 'r') as ro_handle:
+            csv_reader = csv.DictReader(ro_handle)
+            for field_name in csv_reader.fieldnames:
+                if field_name not in headers:
+                    headers.append(field_name) 
+            
+            for dict_row in csv_reader:
+                merged_data.append(dict_row)
+
+    with open(output_file, 'w') as w_handle:
+        csv_writer = csv.DictWriter(w_handle, headers)
+        csv_writer.writeheader()
+        csv_writer.writerows(merged_data)
 
 
 # commands used in solution video for reference

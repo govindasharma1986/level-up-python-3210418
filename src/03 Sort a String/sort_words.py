@@ -1,5 +1,8 @@
 def sort_words(words):
-    return ' '.join(sorted(words.split(), key=str.casefold))
+    word_dict = {str.casefold(word): word  for word in words.split(' ')}
+    word_dict = dict(sorted(word_dict.items()))
+    words = list(word_dict.values())
+    return ' '.join(words)
 
 
 # commands used in solution video for reference

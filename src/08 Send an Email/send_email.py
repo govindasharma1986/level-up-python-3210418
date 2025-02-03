@@ -1,17 +1,31 @@
 import smtplib
+import os
 
-SENDER_EMAIL = 'YOUR_EMAIL@EMAIL.COM'  # replace with your email address
-SENDER_PASSWORD = 'YOUR_PASSWORD'  # replace with your email password
 
-def send_email(receiver_email, subject, body):
-    message = f'Subject: {subject}\n\n{body}'
-    with smtplib.SMTP('smtp.office365.com', 587) as server:
-        server.starttls()
-        server.login(SENDER_EMAIL, SENDER_PASSWORD)
-        server.sendmail(SENDER_EMAIL, receiver_email, message)
+def send_email(smtp_config, email_message):
+    message = f"Subject: {email_message['subject']}"
+    "\n\n"
+    f"{email_message['body']}"
+
+    with smtplib.SMTP_SSL(smtp_config['host'], smtp_config['port']) as server:
+        server.login(smtp_config['uname'], smtp_config['pwd'])
+        server.sendmail(smtp_config['uname'], email_message['recipient'], message)
 
 
 # commands used in solution video for reference
 if __name__ == '__main__':
     # replace receiver email address
-    send_email('RECEIVER@EMAIL.COM', 'Notification', 'Everything is awesome!')
+    smtp_config = {
+        'host': 'smtp.gmail.com',
+        'port': 465,
+        'uname': os.environ.get('GMAIL_USERNAME', 'my_email@gmail.com'),
+        'pwd': os.environ.get('GMAIL_PWD', 'MyComplicatedPwd@1234')  # Enable 2FA and use App Pwd here
+    }
+
+    email_message = {
+        'recipient': 'somerecipient@gmail.com',
+        'subject': 'Test Email',
+        'body': 'Hi, Nice meeting you!'
+    }
+
+    send_email(smtp_config, email_message)
